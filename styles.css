@@ -3,6 +3,21 @@ html {
     "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+input[type=text]
+{
+    margin-top: 10px;
+    line-height: 35px;
+    align-content: center;
+    padding-top: 0px !important;
+    height: 38px;
+    padding-left: 10px;
+    text-decoration: none;
+    background-repeat: repeat-x;
+    border-radius: 25px;
+    border: 0;
+}
+
 .ColorGradient {
   height: 100%;
   width: 100%;
@@ -32,7 +47,9 @@ html {
 
 .showZombieButton,
 .createzombieButton,
-.levelupButton {
+.levelupButton,
+.levelDownButton,
+.changeNameButton {
   width: 200px;
   height: 50px;
   background-color: #fff;
@@ -61,7 +78,9 @@ html {
 
 .showZombieButton:hover,
 .createzombieButton:hover,
-.levelupButton:hover {
+.levelupButton:hover,
+.levelDownButton:hover,
+.changeNameButton:hover {
   background-color: #1e293b;
   color: #fff;
 }
@@ -69,7 +88,9 @@ html {
 @media (min-width: 768px) {
   .showZombieButton,
   .createzombieButton,
-  .levelupButton {
+  .levelupButton,
+  .levelDownButton,
+  .changeNameButton {
     font-size: 1.125rem;
     padding: 1rem 2rem;
   }

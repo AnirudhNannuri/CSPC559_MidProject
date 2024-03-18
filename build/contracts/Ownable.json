@@ -249,7 +249,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1322,
+                        "referencedDeclaration": 1338,
                         "src": "511:3:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -556,10 +556,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1325,
-                        1326
+                        1341,
+                        1342
                       ],
-                      "referencedDeclaration": 1325,
+                      "referencedDeclaration": 1341,
                       "src": "805:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -630,7 +630,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1322,
+                        "referencedDeclaration": 1338,
                         "src": "971:3:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -1237,10 +1237,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1325,
-                        1326
+                        1341,
+                        1342
                       ],
-                      "referencedDeclaration": 1325,
+                      "referencedDeclaration": 1341,
                       "src": "1833:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -1671,7 +1671,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1322,
+                                  "referencedDeclaration": 1338,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -1967,10 +1967,10 @@
                                 }
                               ],
                               "overloadedDeclarations": [
-                                1325,
-                                1326
+                                1341,
+                                1342
                               ],
-                              "referencedDeclaration": 1325,
+                              "referencedDeclaration": 1341,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
@@ -2143,7 +2143,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1322,
+                                  "referencedDeclaration": 1338,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -2718,10 +2718,10 @@
                                 }
                               ],
                               "overloadedDeclarations": [
-                                1325,
-                                1326
+                                1341,
+                                1342
                               ],
-                              "referencedDeclaration": 1325,
+                              "referencedDeclaration": 1341,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
@@ -2984,7 +2984,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-03-17T08:52:11.041Z",
+  "updatedAt": "2024-03-18T19:08:51.446Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

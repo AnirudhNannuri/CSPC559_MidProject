@@ -31,6 +31,13 @@
       <div style="padding: 10px;">
         <button class="levelupButton">Level Up</button>
       </div>
+      <div style="padding: 10px;">
+        <button class="levelDownButton">Level Down</button>
+      </div>
+      <div style="padding: 10px; display: flex; flex-direction: column;">
+        <button class="changeNameButton">Change Name</button>
+        <input type="text" style="padding-top: 10px;" id="zombieName">
+      </div>
     </div>
   </div>
 
@@ -41,11 +48,14 @@
     const showZombieButton = document.querySelector('.showZombieButton');
     const createzombieButton = document.querySelector('.createzombieButton');
     const levelupButton = document.querySelector('.levelupButton');
+    const levelDownButton = document.querySelector('.levelDownButton');
+    const changeNameButton = document.querySelector('.changeNameButton');
 
+    var zombieCount = 1;
     function startApp() {
 
       //ZombieOwnership contratc address
-      var cryptoZombiesAddress = "0xaD942ec03FB6b540cDd15858d61E3226f7b5506e";
+      var cryptoZombiesAddress = "0xf5fC4f2bEcE62cd89C689445c3b4a90a22C2c555";
 
       cryptoZombies = new web3.eth.Contract(cryptoZombiesABI, cryptoZombiesAddress);
       console.log(cryptoZombies);
@@ -95,6 +105,8 @@
     }
 
     function createRandomZombie(name) {
+      name = "CryptoZombie" + zombieCount;
+      zombieCount = zombieCount + 1;
       $("#txStatus").text("Creating new zombie on the blockchain. This may take a while...");
 
       return cryptoZombies.methods.createRandomZombie(name)
@@ -132,6 +144,33 @@
         })
         .on("error", function (error) {
           $("#txStatus").text("Oops! Zombie could not level up.");
+        });
+    }
+
+    async function levelDown(zombieId) {
+      $("#txStatus").text("Leveling down Zombie...");
+      console.log(zombieId);
+      return cryptoZombies.methods.levelDown(0)
+        .send({ from: userAccount, value: web3.utils.toWei("0.001", "ether") })
+        .on("receipt", function (receipt) {
+          console.log(receipt);
+          $("#txStatus").text("Zombie has been successfully leveled down.");
+        })
+        .on("error", function (error) {
+          $("#txStatus").text("Oops! Zombie could not level down.");
+        });
+    }
+
+    function changeNameFns(zombieId) {
+      $('#txStatus').text("Changing Name for your zombie...");
+      const newName = $("#zombieName").val();
+      return cryptoZombies.methods.changeName(zombieId, newName)
+        .send({ from: userAccount })
+        .on("receipt", function (receipt) {
+          $('#txStatus').text("Zombie Name Changed");
+        })
+        .on("error", function (error) {
+          console.log(error)
         });
     }
 
@@ -208,6 +247,17 @@
       getZombiesByOwner(userAccount)
         .then(levelUp);
     });
+
+    levelDownButton.addEventListener('click', () => {
+        getZombiesByOwner(userAccount)
+          .then(levelDown);
+      });
+
+    changeNameButton.addEventListener('click', () => {
+        getZombiesByOwner(userAccount)
+          .then(changeNameFns);
+      });
+
   </script>
 </body>
 
