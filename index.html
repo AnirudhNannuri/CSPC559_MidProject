@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" style="width: 100%; height: 100%;">
+
+<head>
+  <meta charset="UTF-8">
+  <title>CryptoZombies front-end</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.ico">
+  <script language="javascript" type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script language="javascript" type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+  <script language="javascript" type="text/javascript" src="cryptozombies_abi.js"></script>
+  <style></style>
+</head>
+
+<body style="height: 100%; width: 100%; margin: 0px; align-content: center;">
+  <div class="ColorGradient">
+    <div class="displayDiv">
+      <div id="txStatus"></div>
+      <div id="zombies"></div>
+    </div>
+
+    <div class="buttons">
+      <div style="padding: 10px;">
+        <button class="showZombieButton">Show Zombies</button>
+      </div>
+      <div style="padding: 10px;">
+        <button class="createzombieButton">Create Zombie</button>
+      </div>
+      <div style="padding: 10px;">
+        <button class="levelupButton">Level Up</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    var cryptoZombies;
+    var userAccount;
+    const showZombieButton = document.querySelector('.showZombieButton');
+    const createzombieButton = document.querySelector('.createzombieButton');
+    const levelupButton = document.querySelector('.levelupButton');
+
+    function startApp() {
+
+      //ZombieOwnership contratc address
+      var cryptoZombiesAddress = "0xaD942ec03FB6b540cDd15858d61E3226f7b5506e";
+
+      cryptoZombies = new web3.eth.Contract(cryptoZombiesABI, cryptoZombiesAddress);
+      console.log(cryptoZombies);
+
+
+      //the following code from Lesson 6, chapter 5 is obsolete
+      //     var accountInterval = setInterval(function () {
+
+      //      if (web3.eth.accounts[0] !== userAccount) {
+      //userAccount = web3.eth.accounts[0];
+
+      //     getZombiesByOwner(userAccount)
+      //      .then(displayZombies);
+      //  }
+      // }, 100);
+
+      cryptoZombies.events.Transfer({ filter: { _to: userAccount } })
+        .on("data", function (event) {
+          let data = event.returnValues;
+          getZombiesByOwner(userAccount).then(displayZombies);
+        }).on("error", console.error);
+    }
+
+    function displayZombies(ids) {
+      console.log(ids);
+      $("#zombies").empty();
+      for (id of ids) {
+
+        getZombieDetails(id)
+          .then(function (zombie) {
+            console.log(zombie);
+
+
+            $("#zombies").append(`<div class="zombie">
+              <ul>
+                <li>Name: ${zombie.name ? zombie.name : "AceBoi"}</li>
+                <li>DNA: ${zombie.dna ? zombie.dna : "TopG"}</li>
+                <li>Level: ${zombie.level ? zombie.level : "-"}</li>
+                <li>Wins: ${zombie.winCount ? zombie.winCount : "-"}</li>
+                <li>Losses: ${zombie.lossCount ? zombie.lossCount : "-"}</li>
+                <li>Ready Time: ${zombie.readyTime ? zombie.readyTime : "0"}</li>
+              </ul>
+            </div>`);
+          });
+      }
+
+    }
+
+    function createRandomZombie(name) {
+      $("#txStatus").text("Creating new zombie on the blockchain. This may take a while...");
+
+      return cryptoZombies.methods.createRandomZombie(name)
+        .send({ from: userAccount })
+        .on("receipt", function (receipt) {
+          $("#txStatus").text("Successfully created " + name + "!");
+          getZombiesByOwner(userAccount).then(displayZombies);
+        })
+        .on("error", function (error) {
+
+          $("#txStatus").text(error);
+        });
+    }
+
+    function feedOnKitty(zombieId, kittyId) {
+      $("#txStatus").text("Eating a kitty. This may take a while...");
+      return cryptoZombies.methods.feedOnKitty(zombieId, kittyId)
+        .send({ from: userAccount })
+        .on("receipt", function (receipt) {
+          $("#txStatus").text("Ate a kitty and spawned a new Zombie!");
+          getZombiesByOwner(userAccount).then(displayZombies);
+        })
+        .on("error", function (error) {
+          $("#txStatus").text(error);
+        });
+    }
+
+    function levelUp(zombieId) {
+      $("#txStatus").text("Leveling up your zombie...");
+      return cryptoZombies.methods.levelUp(zombieId)
+        .send({ from: userAccount, value: web3.utils.toWei("0.001", "ether") })
+        .on("receipt", function (receipt) {
+          console.log(receipt);
+          $("#txStatus").text("Power overwhelming! Zombie successfully leveled up");
+        })
+        .on("error", function (error) {
+          $("#txStatus").text("Oops! Zombie could not level up.");
+        });
+    }
+
+    function getZombieDetails(id) {
+      console.log(id)
+      return cryptoZombies.methods.zombies(id).call()
+    }
+
+    function zombieToOwner(id) {
+      return cryptoZombies.methods.zombieToOwner(id).call()
+    }
+
+    function getZombiesByOwner(owner, show = null) {
+      if (show != null) $("#txStatus").text("All Available Zombies")
+      return cryptoZombies.methods.getZombiesByOwner(owner).call()
+    }
+
+    window.addEventListener('load', async () => {
+      // Modern dapp browsers...
+      if (window.ethereum) {
+        window.web3 = new Web3(ethereum);
+        try {
+          // Request account access if needed
+          const accounts = await ethereum.enable();
+          // Acccounts now exposed
+          userAccount = accounts[0];
+          startApp()
+        } catch (error) {
+          // User denied account access...
+        }
+      }
+      // Legacy dapp browsers...
+      else if (window.web3) {
+        window.web3 = new Web3(web3.currentProvider);
+        // Acccounts always exposed
+        userAccount = web3.eth.accounts[0];
+        startApp()
+      }
+      // Non-dapp browsers...
+      else {
+        console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+      }
+    });
+
+    //the following code from Lesson 6, chapter 2 is obsolete
+    //metamask no longer inject web3 since early 2021
+    //window.addEventListener('load', function () {
+    //    if (typeof web3 !== 'undefined') {
+    //     web3js = new Web3(web3.currentProvider);
+    //   } else {
+    //  }
+    //  startApp()
+    //  }) 
+
+    ethereum.on('accountsChanged', (accounts) => {
+      window.location.reload();
+    });
+
+    ethereum.on('chainChanged', (chainId) => {
+      window.location.reload();
+    });
+
+
+    createzombieButton.addEventListener('click', () => {
+      createRandomZombie(userAccount);
+    });
+
+    showZombieButton.addEventListener('click', () => {
+      getZombiesByOwner(userAccount, "show")
+        .then(displayZombies);
+    });
+
+    levelupButton.addEventListener('click', () => {
+      getZombiesByOwner(userAccount)
+        .then(levelUp);
+    });
+  </script>
+</body>
+
+</html>
